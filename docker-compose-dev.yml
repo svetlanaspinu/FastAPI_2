@@ -1,0 +1,35 @@
+# version of docker compose
+#version: "2"
+
+#service = containers
+services:
+    api:
+        build: . #specify location: here current directory - .
+        # this tell docker to start the postgres before the api
+        depends_on:
+            - postgres
+        ports:
+            - 8000:8000 #<port on localhost>:<port on container>
+            # passing the environment variables:
+        environment:
+            - DATABASE_HOSTNAME=localhost
+            - DATABASE_PORT=5432
+            - DATABASE_PASSWORD=password456
+            - DATABASE_NAME=api_project2
+            - DATABASE_USERNAME=postgres
+            - SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+            - ALGORITHM=HS256
+            - ACCESS_TOKEN_EXPIRE_MINUTES=60 
+    postgres:
+        image: postgres
+        environment:
+            - Postgres_PASSWORD=password456
+            - postgres_db=api_project2
+
+      # if we delete the container we loose all the data/ create a volume to store it
+        volumes:
+            - postgres-db:/var/lib/postgresql/data # codul din documentatia docker+postgresql
+  
+# creating a volume that is globally:
+volumes:
+    postgres-db:

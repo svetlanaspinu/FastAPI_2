@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware# to access the api from difre
 from . import models # schemas, utils
 from .database import engine
 from .routers import post, user, auth, vote
-from .config import Settings
+from .config import settings
 #from fastapi.params import Body #to connect with body from Postman
 #from pydantic import BaseModel  #to create the schema
 #from typing import Optional, List #it improves code readability; helps in reducing runtime errors,
@@ -38,7 +38,7 @@ app.include_router(vote.router)
 # path operation
 @app.get("/") # HTTP method .get
 def root():
-    return {"message": "Hello World"}
+    return {"message": "Hello World!!!!!"}
 
 
 #teh array for the output

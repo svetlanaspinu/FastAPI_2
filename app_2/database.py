@@ -17,6 +17,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # this helps to talk with th database
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine) #this are defaul values from fastapi-sql website.and
+
 Base = declarative_base()
 
 # this function connects with the database

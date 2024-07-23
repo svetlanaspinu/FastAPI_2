@@ -18,7 +18,6 @@ router = APIRouter(
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)): ## the email and password is stored in user
 
 #hash the password that can be retrieve in user.password
-# calling the pwd that contains the hash algorithm, attach the hash method, passing the user.password to hide the password
     hashed_password = utils.hash(user.password)
     #storing the hased password in user.password
     user.password = hashed_password

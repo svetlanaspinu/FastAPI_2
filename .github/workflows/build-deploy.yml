@@ -1,0 +1,14 @@
+name: Build and Deploy Code # every process shoul have a name
+# what trigers the code to run and branches
+on: [push, pull_request]
+
+jobs:
+    job1:
+        runs-on: windows-latest # specifying the OS
+        steps:
+            - name: pulling git repo # name of the actions
+              uses: actions/checkout@v4 # commands from https://github.com/marketplace/actions/checkout example
+            - name: running my first job
+              run: print "runing the test"
+
+    
