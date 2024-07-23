@@ -51,7 +51,7 @@ jobs:
                 pytest
 
 # login to Dockerhub
-            - name: Login to Docker Hub
+            - name: Login to Docker Hub/CD
               uses: docker/login-action@v3
               with:
                 username: ${{ secrets.DOCKER_HUB_USERNAME }}
