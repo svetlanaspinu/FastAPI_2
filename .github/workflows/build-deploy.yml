@@ -8,7 +8,11 @@ jobs:
         steps:
             - name: pulling git repo # name of the actions
               uses: actions/checkout@v4 # commands from https://github.com/marketplace/actions/checkout example
-            - name: running my first job
-              run: print "runing the test"
-
+            - uses: actions/setup-python@v5 #installing python
+              with:
+                python-version: '3.10' 
+            - name: update pip
+              run: python -m pip --upgrade pip
+            - name: install all dependencies #requiremnts.txt file
+              run: pip install -r requirements.txt
     
