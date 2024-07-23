@@ -33,7 +33,7 @@ jobs:
                     --health-timeout 5s
                     --health-retries 5
 
-        runs-on: windows-latest # specifying the OS
+        runs-on: ubutu-latest # specifying the OS
         steps:
             - name: pulling git repo # name of the actions
               uses: actions/checkout@v4 # commands from https://github.com/marketplace/actions/checkout example
