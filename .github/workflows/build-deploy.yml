@@ -15,4 +15,9 @@ jobs:
               run: python -m pip install --upgrade pip
             - name: install all dependencies #requiremnts.txt file
               run: pip install -r requirements.txt
+            - name: test with pytest # to run pytest
+            #to run multiple commands using | - at run command
+              run: |
+                pip install pytest 
+                pytest
     
