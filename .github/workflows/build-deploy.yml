@@ -17,6 +17,22 @@ jobs:
           SECRET_KEY: ${{secrets.SECRET_KEY}}
           ALGORITHM: ${{secrets.ALGORITHM}}
           ACCESS_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
+
+# connecting with postgresql
+        services:
+            postgres:
+                image: postgres
+                env:
+                  POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+                  POSTGRES_DB: ${{secrets.DATABASE_NAME}}_test # for testing
+                ports:
+                    - 5432:5432
+                options: >- # https://docs.github.com/en/actions/using-containerized-services/creating-postgresql-service-containers
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
         runs-on: windows-latest # specifying the OS
         steps:
             - name: pulling git repo # name of the actions
