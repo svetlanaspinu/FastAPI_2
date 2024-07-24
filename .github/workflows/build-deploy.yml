@@ -26,7 +26,7 @@ jobs:
           POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
           POSTGRES_DB: ${{secrets.DATABASE_NAME}}_test # for testing
         ports:
-        - 5432:5432
+        - 8000:8000
 
         options: >-
           --health-cmd pg_isready 
@@ -52,33 +52,30 @@ jobs:
             pytest
 
 # login to Dockerhub
-  #          - name: Login to Docker Hub/CD
- #             uses: docker/login-action@v3
-  #            with:
-  #              username: $#{{ secrets.DOCKER_HUB_USERNAME }}
-  #              password: $#{{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-#
-  #          - name: Set up Docker Buildx
-  #            id: buildx
-  #            uses: docker/setup-buildx-action@v3
-             
+      - name: Login to Docker Hub/CD
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  #          - name: Build and push
-  #            id: docker_build
-  #            uses: docker/build-push-action@v6
-              
-                #tags: #$#{{ secrets.DOCKER_HUB_USERNAME }}/fastapi_2:latest
- #             with:
- #                   context: ./
- #                   file: ./Dockerfile
- #                   builder: $#{{steps.buildx.outputs.name}}
- #                   push: true
- #                   tags: $#{{ secrets.DOCKER_HUB_USERNAME }}/fastapi_2
- #                   cache-from: type=local,src=/tmp/.buildx-cache
- #                   cache-to: type=local,dest=/tmp/.buildx-cache
- #           - name: Image digest
- #             run: echo $#{{steps.docker_build.outputs.digest}}
-#               Finish CI
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{steps.buildx.outputs.name}}
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi_2:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+      - name: Image digest
+        run: echo $#{{steps.docker_build.outputs.digest}}
+              Finish CI
 
 #           Start CD - responsible for pushing the code to production environment
   deploy: 
