@@ -38,7 +38,7 @@ app.include_router(vote.router)
 # path operation
 @app.get("/") # HTTP method .get
 def root():
-    return {"message": "Hello World!!!!!"}
+    return {"message": "Hello World! Succesfully deployed CI/CD pipeline"}
 
 
 #teh array for the output

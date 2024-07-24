@@ -81,11 +81,28 @@ jobs:
 #               Finish CI
 
 #           Start CD - responsible for pushing the code to production environment
-  deploy:
+  deploy: 
     runs-on: ubuntu-latest
     needs: [build] #list of jobs need to be complete - job above is called build
+    environment:
+        name: CD_Heroku
 
-    steps:
-        - name: deploying firts run
-          run: echo "run the deploy"
+    steps: #https://github.com/marketplace/actions/deploy-to-heroku
+        - name: pulling git repo CD/HEROKU # name of the actions
+          uses: actions/checkout@v4
+        - name: deploying to Heroku
+          uses: akhileshns/heroku-deploy@v3.13.15 # This is the action
+          with:
+            heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+            heroku_app_name: ${{secrets.HEROKU_API_NAME}} #Must be unique in Heroku
+            heroku_email: ${{secrets.HEROKU_EMAIL}}
+
+# connecting with Heroku - manually but to do automatically i'll look for optin on github marketplace
+ # 1. pull github repo
+ # 2. install heroku cli
+ # 3. heroku login
+ # 4. add git remote for heroku
+ # 5. git push heroku main
+
+# on github marketplace Deploy to Heroku option
 
