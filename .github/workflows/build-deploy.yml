@@ -5,76 +5,87 @@ on: [push, pull_request]
 #       Staring the CI - Continous Integration
 
 jobs:
-    job1:
-        environment:
-            name: testing
-        env: # set up a job for env variable
-          DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}} # inserat repositoriul secret
-          DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
-          SECRET_KEY: ${{secrets.SECRET_KEY}}
-          ALGORITHM: ${{secrets.ALGORITHM}}
-          ACCESS_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
+  build:
+    environment:
+      name: testing
+    env: # set up a job for env variable
+      DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}} # inserat repositoriul secret
+      DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+      DATABASE_USERNAME: ${{secrets.DATABASE_USERNAME}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      ALGORITHM: ${{secrets.ALGORITHM}}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
 
 # connecting with postgresql
-        services:
-            postgres:
-                image: postgres
-                env:
-                  POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-                  POSTGRES_DB: ${{secrets.DATABASE_NAME}}_test # for testing
-                ports:
-                    - 5432:5432
-                options: >- # https://docs.github.com/en/actions/using-containerized-services/creating-postgresql-service-containers
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: $#{{secrets.DATABASE_PASSWORD}}
+          POSTGRES_DB: $#{{secrets.DATABASE_NAME}}_test # for testing
+        ports:
+        - 5432:5432
 
-        runs-on: ubuntu-latest # specifying the OS
-        steps:
-            - name: pulling git repo # name of the actions
-              uses: actions/checkout@v4 # commands from https://github.com/marketplace/actions/checkout example
-            - uses: actions/setup-python@v5 #installing python
-              with:
-                python-version: '3.10' 
-            - name: update pip
-              run: python -m pip install --upgrade pip
-            - name: install all dependencies #requiremnts.txt file
-              run: pip install -r requirements.txt
-            - name: test with pytest # to run pytest
+        options: >-
+          --health-cmd pg_isready 
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    runs-on: ubuntu-latest # specifying the OS
+    steps:
+      - name: pulling git repo # name of the actions
+        uses: actions/checkout@v4
+      - name: Install python version  # commands from https://github.com/marketplace/actions/checkout example
+        uses: actions/setup-python@v5 #installing python
+        with:
+          python-version: '3.10' 
+      - name: update pip
+        run: python -m pip install --upgrade pip
+      - name: install all dependencies #requiremnts.txt file
+        run: pip install -r requirements.txt
+      - name: test with pytest # to run pytest
             #to run multiple commands using | - at run command
-              run: |
-                pip install pytest 
-                pytest
+        run: |
+            pip install pytest 
+            pytest
 
 # login to Dockerhub
-            - name: Login to Docker Hub/CD
-              uses: docker/login-action@v3
-              with:
-                username: ${{ secrets.DOCKER_HUB_USERNAME }}
-                password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-            - name: Set up Docker Buildx
-              id: buildx
-              uses: docker/setup-buildx-action@v3
+  #          - name: Login to Docker Hub/CD
+ #             uses: docker/login-action@v3
+  #            with:
+  #              username: $#{{ secrets.DOCKER_HUB_USERNAME }}
+  #              password: $#{{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+#
+  #          - name: Set up Docker Buildx
+  #            id: buildx
+  #            uses: docker/setup-buildx-action@v3
              
 
-            - name: Build and push
-              id: docker_build
-              uses: docker/build-push-action@v6
-              #with:
-                #push: true
+  #          - name: Build and push
+  #            id: docker_build
+  #            uses: docker/build-push-action@v6
+              
                 #tags: #$#{{ secrets.DOCKER_HUB_USERNAME }}/fastapi_2:latest
-              with:
-                    context: ./
-                    file: ./Dockerfile
-                    builder: ${{steps.buildx.outputs.name}}
-                    push: true
-                    tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi_2
-                    cache-from: type=local,src=/tmp/.buildx-cache
-                    cache-to: type=local,dest=/tmp/.buildx-cache
-            - name: Image digest
-              run: echo ${{steps.docker_build.outputs.digest}}
+ #             with:
+ #                   context: ./
+ #                   file: ./Dockerfile
+ #                   builder: $#{{steps.buildx.outputs.name}}
+ #                   push: true
+ #                   tags: $#{{ secrets.DOCKER_HUB_USERNAME }}/fastapi_2
+ #                   cache-from: type=local,src=/tmp/.buildx-cache
+ #                   cache-to: type=local,dest=/tmp/.buildx-cache
+ #           - name: Image digest
+ #             run: echo $#{{steps.docker_build.outputs.digest}}
+#               Finish CI
+
+#           Start CD - responsible for pushing the code to production environment
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build] #list of jobs need to be complete - job above is called build
+
+    steps:
+        - name: deploying firts run
+          run: echo "run the deploy"
+
